@@ -5,17 +5,15 @@
 #define in2 D6
 #define in3 D5
 #define in4 D4  
-#define enA D8
+#define enA D3
 #define enB D3
 
-unsigned char pwmA = 250;
-unsigned char pwmB = 250;
-unsigned char pwmRendah = 60;
-bool maju, mundur, kiri, kanan, capit_gigit, capit_lepas;
+
+bool maju, mundur, kiri, kanan;
 uint16_t pot;
 
 typedef struct struct_message{
-  bool nilai_maju, nilai_mundur, nilai_kiri, nilai_kanan, nilai_capit_gigit, nilai_capit_lepas;
+  bool nilai_maju, nilai_mundur, nilai_kiri, nilai_kanan;
   uint16_t nilai_pot;
 }struct_messange;
 
@@ -26,8 +24,6 @@ void OnDataRecv(uint8_t * mac, uint8_t *incomingData, uint8_t len) {
   mundur      = myData.nilai_mundur;
   kiri        = myData.nilai_kiri;
   kanan       = myData.nilai_kanan;
-  capit_gigit = myData.nilai_capit_gigit;
-  capit_lepas = myData.nilai_capit_lepas;
   pot         = myData.nilai_pot;
 }
 
@@ -63,7 +59,13 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  Serial.println("Nilai maju : " + String(maju) + "   | Nilai mundur : " + String(mundur) + "  | Nilai kiri : " + String(kiri)+ "  | Nilai kanan : " + String(kanan)+ "  | Nilai gigit : " + String(capit_gigit) +  "  | Nilai lepas : " + String(capit_lepas) +  "  | Nilai Pot : " + String(pot));
+  Serial.println(
+    "Nilai maju : " + String(maju) + 
+    "   | Nilai mundur : " + String(mundur) + 
+    "  | Nilai kiri : " + String(kiri)+ 
+    "  | Nilai kanan : " + String(kanan)+ 
+    "  | Nilai Pot : " + String(pot)
+   );
  
   if(maju == LOW){
     gerak_maju();
@@ -87,8 +89,8 @@ void gerak_maju(){
   digitalWrite(in2, LOW);
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);
-  analogWrite(enA, pwmA);
-  analogWrite(enB, pwmB);
+  analogWrite(enA, pot);
+  analogWrite(enB, pot);
   Serial.println("Maju");
 }
 void gerak_kiri(){
@@ -96,8 +98,8 @@ void gerak_kiri(){
   digitalWrite(in2, LOW);
   digitalWrite(in3, LOW);
   digitalWrite(in4, HIGH);
-  analogWrite(enA, pwmA);
-  analogWrite(enB, pwmB);
+  analogWrite(enA, pot-50);
+  analogWrite(enB, pot-50);
   Serial.println("Kiri");
 }
 void gerak_kanan(){
@@ -105,8 +107,8 @@ void gerak_kanan(){
   digitalWrite(in2, HIGH);
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);
-  analogWrite(enA, pwmA);
-  analogWrite(enB, pwmB);
+  analogWrite(enA, pot-50);
+  analogWrite(enB, pot-50);
   Serial.println("Kanan");
 }
 void gerak_mundur(){
@@ -114,8 +116,8 @@ void gerak_mundur(){
   digitalWrite(in2, HIGH);
   digitalWrite(in3, LOW);
   digitalWrite(in4, HIGH);
-  analogWrite(enA, pwmA);
-  analogWrite(enB, pwmB);
+  analogWrite(enA, pot);
+  analogWrite(enB, pot);
   Serial.println("Mundur");
 }
 
