@@ -21,6 +21,16 @@
 // Insert RTDB URLefine the RTDB URL */
 #define DATABASE_URL "https://robotsumo-ef091-default-rtdb.asia-southeast1.firebasedatabase.app" 
 
+#define led_indikator D0
+#define pin_maju D3
+#define pin_mundur D7
+#define pin_kiri D4
+#define pin_kanan D1
+#define pin_pot A0
+
+bool maju, mundur, kiri, kanan;
+uint16_t pot;
+
 //Define Firebase Data object
 FirebaseData fbdo;
 
@@ -32,6 +42,13 @@ int count = 0;
 bool signupOK = false;
 
 void setup(){
+  pinMode(led_indikator   , OUTPUT);
+  pinMode(pin_maju        , INPUT_PULLUP);
+  pinMode(pin_mundur      , INPUT_PULLUP);
+  pinMode(pin_kiri        , INPUT_PULLUP);
+  pinMode(pin_kanan       , INPUT_PULLUP);
+  pinMode(pin_pot         , INPUT);
+  
   Serial.begin(115200);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   Serial.print("Connecting to Wi-Fi");
@@ -67,29 +84,26 @@ void setup(){
 }
 
 void loop(){
-  if (Firebase.ready() && signupOK && (millis() - sendDataPrevMillis > 500 || sendDataPrevMillis == 0)){
-    sendDataPrevMillis = millis();
-    // Write an Int number on the database path test/int
-    if (Firebase.RTDB.setInt(&fbdo, "test/int", count)){
-      Serial.println("PASSED");
-      Serial.println("PATH: " + fbdo.dataPath());
-      Serial.println("TYPE: " + fbdo.dataType());
-    }
-    else {
-      Serial.println("FAILED");
-      Serial.println("REASON: " + fbdo.errorReason());
-    }
-    count++;
-    
-    // Write an Float number on the database path test/float
-    if (Firebase.RTDB.setFloat(&fbdo, "test/float", 0.01 + random(0,100))){
-      Serial.println("PASSED");
-      Serial.println("PATH: " + fbdo.dataPath());
-      Serial.println("TYPE: " + fbdo.dataType());
-    }
-    else {
-      Serial.println("FAILED");
-      Serial.println("REASON: " + fbdo.errorReason());
-    }
-  }
+  maju        = digitalRead(pin_maju);
+  mundur      = digitalRead(pin_mundur);
+  kiri        = digitalRead(pin_kiri);
+  kanan       = digitalRead(pin_kanan);
+  pot         = analogRead(pin_pot);
+  pot         = map(pot, 0, 1023, 150, 255);
+  
+
+  Serial.println("Nilai maju : " + String(maju) 
+  + "   | Nilai mundur : " + String(mundur) 
+  + "  | Nilai kiri : " + String(kiri)
+  + "  | Nilai kanan : " + String(kanan)
+  + "  | Pot : " + String(pot)
+  );
+  Firebase.RTDB.setBool(&fbdo, "test/maju", maju);
+  Firebase.RTDB.setBool(&fbdo, "test/mundur", mundur);
+  Firebase.RTDB.setBool(&fbdo, "test/kiri", kiri);
+  Firebase.RTDB.setBool(&fbdo, "test/kanan", kanan);
+  Firebase.RTDB.setInt(&fbdo, "test/pot", pot);
+  
+
+  
 }

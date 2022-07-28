@@ -52,7 +52,7 @@ void setup() {
   esp_now_register_send_cb(OnDataSent);
   esp_now_add_peer(broadcastAddress, ESP_NOW_ROLE_SLAVE, 1, NULL, 0);
   
-  pinMode(led_indikator,  OUTPUT);
+  pinMode(led_indikator   ,OUTPUT);
   pinMode(pin_maju        , INPUT_PULLUP);
   pinMode(pin_mundur      , INPUT_PULLUP);
   pinMode(pin_kiri        , INPUT_PULLUP);
