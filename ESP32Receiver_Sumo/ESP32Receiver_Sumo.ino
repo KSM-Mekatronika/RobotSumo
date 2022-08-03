@@ -1,12 +1,11 @@
 #include <esp_now.h>
 #include <WiFi.h>
 
-#define in1 22
-#define in2 23
-#define in3 25
-#define in4 26  
-#define enA 27
-#define enB 34
+#define in1 18
+#define in2 19
+#define in3 33
+#define in4 32
+
 
 
 bool maju, mundur, kiri, kanan;
@@ -31,7 +30,7 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   kanan       = myData.nilai_kanan;
   pot         = myData.nilai_pot;
 }
- 
+
 void setup() {
   // Initialize Serial Monitor
   Serial.begin(115200);
@@ -39,10 +38,11 @@ void setup() {
   pinMode(in2, OUTPUT);
   pinMode(in3, OUTPUT);
   pinMode(in4, OUTPUT);
-  pinMode(enA, OUTPUT);
-  pinMode(enB, OUTPUT);
-  digitalWrite(enA, 0);
-  digitalWrite(enB, 0);
+
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, LOW);
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, LOW);
   // Set device as a Wi-Fi Station
   WiFi.mode(WIFI_STA);
 
@@ -51,61 +51,61 @@ void setup() {
     Serial.println("Error initializing ESP-NOW");
     return;
   }
-  
+
   // Once ESPNow is successfully Init, we will register for recv CB to
   // get recv packer info
   esp_now_register_recv_cb(OnDataRecv);
 }
- 
+
 void loop() {
   Serial.println(
-    "Nilai maju : " + String(maju) + 
-    "   | Nilai mundur : " + String(mundur) + 
-    "  | Nilai kiri : " + String(kiri)+ 
-    "  | Nilai kanan : " + String(kanan)+ 
+    "Nilai maju : " + String(maju) +
+    "   | Nilai mundur : " + String(mundur) +
+    "  | Nilai kiri : " + String(kiri) +
+    "  | Nilai kanan : " + String(kanan) +
     "  | Nilai Pot : " + String(pot)
-   );
-   if(maju == LOW){
+  );
+  if (maju == HIGH) {
     gerak_maju();
   }
-  if(mundur == LOW){
+  if (mundur == HIGH) {
     gerak_mundur();
   }
-  if(kiri == LOW){
+  if (kiri == HIGH) {
     gerak_kiri();
   }
-  if(kanan == LOW){
+  if (kanan == HIGH) {
     gerak_kanan();
   }
-  if((maju == HIGH) and (mundur == HIGH) and (kanan == HIGH) and (kiri == HIGH)){
+  if ((maju == LOW) and (mundur == LOW) and (kanan == LOW) and (kiri == LOW)) {
     berhenti();
   }
- 
+
 }
 
 
-void gerak_maju(){
+void gerak_maju() {
   digitalWrite(in1, HIGH);
   digitalWrite(in2, LOW);
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);
   Serial.println("Maju");
 }
-void gerak_kiri(){
+void gerak_kiri() {
   digitalWrite(in1, HIGH);
   digitalWrite(in2, LOW);
   digitalWrite(in3, LOW);
   digitalWrite(in4, HIGH);
   Serial.println("Kiri");
 }
-void gerak_kanan(){
+void gerak_kanan() {
   digitalWrite(in1, LOW);
   digitalWrite(in2, HIGH);
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);
   Serial.println("Kanan");
 }
-void gerak_mundur(){
+void gerak_mundur() {
   digitalWrite(in1, LOW);
   digitalWrite(in2, HIGH);
   digitalWrite(in3, LOW);
@@ -113,6 +113,10 @@ void gerak_mundur(){
   Serial.println("Mundur");
 }
 
-void berhenti(){
+void berhenti() {
   Serial.println("Berhenti");
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, LOW);
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, LOW);
 }
