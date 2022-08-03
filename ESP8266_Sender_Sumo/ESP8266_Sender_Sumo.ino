@@ -2,7 +2,7 @@
 #include <ESP8266WiFi.h>
 
 #define led_indikator D0
-#define pin_maju D3
+#define pin_maju D2
 #define pin_mundur D7
 #define pin_kiri D4
 #define pin_kanan D1
